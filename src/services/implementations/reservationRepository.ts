@@ -4,7 +4,7 @@ import { IReservationRepository } from '../IReservationRepository';
 class ReservationRepository implements IReservationRepository {
   private reservationsMock: IReservation[] = [
     {
-      name: 'Brian Andre',
+      name: 'Fulano de tal',
       phone: '51 987654321',
       date: new Date(),
       places: 2,
@@ -12,7 +12,7 @@ class ReservationRepository implements IReservationRepository {
       reservationId: '1',
     },
     {
-      name: 'Arthur Farais',
+      name: 'Cicrano de cá',
       phone: '51 918273645',
       date: new Date(),
       places: 8,
@@ -20,7 +20,7 @@ class ReservationRepository implements IReservationRepository {
       reservationId: '2',
     },
     {
-      name: 'Johnsons Lopez',
+      name: 'Beltrano Lopez',
       phone: '51 9537853',
       date: new Date(),
       places: 5,
@@ -28,7 +28,7 @@ class ReservationRepository implements IReservationRepository {
       reservationId: '3',
     },
     {
-      name: 'Eduardo Garcia',
+      name: 'Johnson Garcia',
       phone: '51 9337853',
       date: new Date(),
       places: 2,
@@ -38,22 +38,25 @@ class ReservationRepository implements IReservationRepository {
   ];
 
   public create = async (data: any): Promise<IReservation> => {
-    return {
-      name: 'John Doe',
-      phone: '51 987654321',
-      date: new Date(),
-      places: 3,
-      value: 150,
+    const newReservation = {
       reservationId: String(Math.floor(Math.random() * (100 ^ 2))),
+      ...data,
+      value: 150,
     };
+
+    this.reservationsMock.push(newReservation);
+
+    return newReservation;
   };
 
   public getOne = async (
     reservationId: string
   ): Promise<IReservation | undefined> => {
-    return this.reservationsMock.find(
+    const reservation = this.reservationsMock.find(
       (reservation) => reservation.reservationId === reservationId
     );
+
+    return reservation;
   };
 
   public getMany = async (): Promise<IReservation[] | undefined> => {
@@ -69,17 +72,29 @@ class ReservationRepository implements IReservationRepository {
     );
 
     if (found) {
-      found = { ...found, ...data };
+      const updatedReservation = { ...found, ...data };
+
+      this.reservationsMock.map(reservation => {
+        if(reservation.reservationId === reservationId){
+          return updatedReservation
+        }
+        return reservation
+      })
     }
 
     return found;
   };
 
   public delete = async (id: string): Promise<boolean> => {
+    const a =  this.reservationsMock.filter(reservation =>{
+      if(reservation.reservationId !== id) return reservation;
+    });
+
     const deletado = this.reservationsMock.find(
       (reservation) => reservation.reservationId === id
     );
-    return !!deletado;
+    
+    return !deletado;
   };
 }
 
